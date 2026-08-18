@@ -58,6 +58,16 @@ public class Esther {
                 System.out.println("Nice! I've marked this task as done:");
                 System.out.println("  [X] " + tasks[taskIndex]);
                 System.out.println(line);
+            } else if (command.startsWith("unmark ")) {
+                int taskNumber = Integer.parseInt(command.substring(7).trim());
+                int taskIndex = taskNumber - 1;
+
+                isDone[taskIndex] = false;
+
+                System.out.println(line);
+                System.out.println("Okay! I've marked this task as not done.");
+                System.out.println(" [ ] " + tasks[taskIndex]);
+                System.out.println(line);
             } else {
                 tasks[taskCount] = command;
                 taskCount++;
