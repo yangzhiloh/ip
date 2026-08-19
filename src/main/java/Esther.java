@@ -1,7 +1,14 @@
 import java.util.Scanner;
 
-
+/**
+ * Represents the Esther personal assistant chatbot.
+ */
 public class Esther {
+    /**
+     * Runs Esther's command-line interface.
+     *
+     * @param args Command-line arguments supplied to the application.
+     */
     public static void main(String[] args) {
         String line = "___________________________________________________________";
 
@@ -85,13 +92,36 @@ public class Esther {
                 System.out.println(" " + task);
                 System.out.println(line);
             } else {
-                tasks[taskCount] = new Task(command);
+                Task task;
+
+                if (command.startsWith("todo ")) {
+                    String description = command.substring(5).trim();
+                    task = new Todo(description);
+                } else if (command.startsWith("deadline ")) {
+                    int byIndex = command.indexOf(" /by ");
+                    String description = command.substring(9, byIndex).trim();
+                    String by = command.substring(byIndex + 5).trim();
+                    task = new Deadline(description, by);
+                } else if (command.startsWith("event ")) {
+                    int fromIndex = command.indexOf(" /from ");
+                    int toIndex = command.indexOf(" /to ");
+                    String description = command.substring(6, fromIndex).trim();
+                    String from = command.substring(fromIndex + 7, toIndex).trim();
+                    String to = command.substring(toIndex + 5).trim();
+                    task = new Event(description, from, to);
+                } else {
+                    task = new Task(command);
+                }
+
+                tasks[taskCount] = task;
                 taskCount++;
+
                 String taskWord = taskCount == 1 ? "task" : "tasks";
 
                 System.out.println(line);
-                System.out.println(String.format("Added: %s", command));
-                System.out.println(String.format("Now you have %d %s in the list", taskCount, taskWord));
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + task);
+                System.out.println("Now you have " + taskCount + " " + taskWord + " in the list.");
                 System.out.println(line);
             }
 
