@@ -89,6 +89,22 @@ public class Esther {
                     System.out.println("Okay! I've marked this task as not done.");
                     System.out.println(" " + task);
                     System.out.println(line);
+                } else if (command.equals("delete")
+                        || command.startsWith("delete ")) {
+                    int taskIndex = parseTaskIndex(
+                            command, "delete", tasks.size());
+
+                    Task removedTask = tasks.remove(taskIndex);
+                    String taskWord = tasks.size() == 1 ? "task" : "tasks";
+
+                    System.out.println(line);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println(
+                            "Now you have " + tasks.size() + " "
+                                    + taskWord + " in the list.");
+                    System.out.println(line);
+
                 } else {
                     Task task;
 
@@ -208,7 +224,7 @@ public class Esther {
 
         if (numberText.isEmpty()) {
             throw new EstherException(
-                    "OOPS! Please provide a task number.");
+                    "STOP PLAYING! THERES NO NUMBER AT ALL!!");
         }
 
         int taskNumber;
@@ -217,12 +233,12 @@ public class Esther {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException exception) {
             throw new EstherException(
-                    "OOPS! The task number must be a whole number.");
+                    "... NOT A WHOLE NUMBER, ARE YOU KIDDING ME!");
         }
 
         if (taskNumber < 1 || taskNumber > taskCount) {
             throw new EstherException(
-                    "OOPS! That task number does not exist.");
+                    "STOP PLAYING! THIS NUMBER DOES NOT EXIST!");
         }
 
         return taskNumber - 1;
