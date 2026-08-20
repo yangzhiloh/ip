@@ -13,7 +13,7 @@ public class Event extends Task {
      * @param to Ending date or time of the event.
      */
     public Event(String description, String from, String to) {
-        super(description);
+        super(description, TaskType.EVENT);
         this.from = from;
         this.to = to;
     }
@@ -21,7 +21,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return String.format(
-                "[E]%s (from: %s to: %s)",
+                "%s (from: %s to: %s)",
                 super.toString(),
                 from,
                 to

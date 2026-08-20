@@ -11,14 +11,14 @@ public class Deadline extends Task {
      * @param by Due date or time of the deadline.
      */
     public Deadline(String description, String by) {
-        super(description);
+        super(description, TaskType.DEADLINE);
         this.by = by;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "[D]%s (by: %s)",
+                "%s (by: %s)",
                 super.toString(),
                 by
         );

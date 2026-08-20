@@ -8,13 +8,13 @@ public class Todo extends Task {
      * @param description Description of the todo.
      */
     public Todo(String description) {
-        super(description);
+        super(description, TaskType.TODO);
     }
 
     @Override
     public String toString() {
         return String.format(
-                "[T]%s",
+                "%s",
                 super.toString()
         );
     }

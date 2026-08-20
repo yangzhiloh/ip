@@ -4,14 +4,17 @@
 public class Task {
     protected String description;
     protected boolean isDone;
+    protected final TaskType type;
 
     /**
      * Creates an incomplete task with the specified description.
      *
      * @param description Description of the task.
+     * @param type Type of the task.
      */
-    public Task(String description) {
+    public Task(String description, TaskType type) {
         this.description = description;
+        this.type = type;
         this.isDone = false;
     }
 
@@ -40,7 +43,8 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-            "[%s] %s",
+            "[%s][%s] %s",
+            this.type.getSymbol(),
             getStatusIcon(),
             this.description
         );
