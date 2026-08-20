@@ -1,5 +1,5 @@
+import java.util.ArrayList;
 import java.util.Scanner;
-
 /**
  * Represents the Esther personal assistant chatbot.
  */
@@ -14,8 +14,7 @@ public class Esther {
 
         Scanner scanner = new Scanner(System.in);
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         System.out.println(line);
         System.out.println("Heyyyy! I'm your favourite assistant Esther.");
@@ -34,8 +33,8 @@ public class Esther {
                 } else if (command.equals("list")) {
                     int tasksLeft = 0;
 
-                    for (int i = 0; i < taskCount; i++) {
-                        if (!tasks[i].isDone()) {
+                    for (int i = 0; i < tasks.size(); i++) {
+                        if (!tasks.get(i).isDone()) {
                             tasksLeft++;
                         }
                     }
@@ -61,18 +60,18 @@ public class Esther {
                         ));
                     }
 
-                    for (int i = 0; i < taskCount; i++) {
+                    for (int i = 0; i < tasks.size(); i++) {
                         System.out.println(String.format(
                             "%d.%s",
                             i + 1,
-                            tasks[i].toString()
+                            tasks.get(i)
                         ));
                     }
 
                     System.out.println(line);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    int taskIndex = parseTaskIndex(command, "mark", taskCount);
-                    Task task = tasks[taskIndex];
+                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                    Task task = tasks.get(taskIndex);
 
                     task.markAsDone();
 
@@ -81,8 +80,8 @@ public class Esther {
                     System.out.println(" " + task);
                     System.out.println(line);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", taskCount);
-                    Task task = tasks[taskIndex];
+                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                    Task task = tasks.get(taskIndex);
 
                     task.markAsNotDone();
 
@@ -171,15 +170,14 @@ public class Esther {
                         );
                     }
 
-                    tasks[taskCount] = task;
-                    taskCount++;
+                    tasks.add(task);
 
-                    String taskWord = taskCount == 1 ? "task" : "tasks";
+                    String taskWord = tasks.size() == 1 ? "task" : "tasks";
 
                     System.out.println(line);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + task);
-                    System.out.println("Now you have " + taskCount + " " + taskWord + " in the list.");
+                    System.out.println("Now you have " + tasks.size() + " " + taskWord + " in the list.");
                     System.out.println(line);
                 }
 
