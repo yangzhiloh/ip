@@ -81,6 +81,24 @@ public class TaskList {
     }
 
     /**
+     * Returns tasks whose descriptions contain the specified keyword.
+     *
+     * @param keyword Keyword to search for.
+     * @return Matching tasks.
+     */
+    public List<Task> find(String keyword) {
+        List<Task> matchingTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.hasKeyword(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return List.copyOf(matchingTasks);
+    }
+
+    /**
      * Returns an unmodifiable copy of the stored tasks.
      *
      * @return Copy of the stored tasks.
