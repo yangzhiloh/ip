@@ -1,0 +1,34 @@
+package esther.task;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+public class TaskListTest {
+    @Test
+    public void find_matchingKeyword_returnsMatchingTasksInOrder() {
+        Task firstTask = new Todo("Read a book");
+        Task secondTask = new Todo("Return a book");
+        Task thirdTask = new Todo("Buy milk");
+
+        TaskList taskList = new TaskList(
+                List.of(firstTask, secondTask, thirdTask));
+
+        List<Task> matchingTasks = taskList.find("book");
+
+        assertEquals(2, matchingTasks.size());
+        assertEquals(firstTask, matchingTasks.get(0));
+        assertEquals(secondTask, matchingTasks.get(1));
+    }
+
+    @Test
+    public void find_missingKeyword_returnsEmptyList() {
+        TaskList taskList = new TaskList(
+                List.of(new Todo("Read a book")));
+
+        assertTrue(taskList.find("movie").isEmpty());
+    }
+}

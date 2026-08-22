@@ -1,5 +1,7 @@
 package esther.task;
 
+import java.util.Locale;
+
 /**
  * Represents a task tracked by Esther.
  */
@@ -32,6 +34,17 @@ public class Task {
      */
     public void markAsNotDone() {
         this.isDone = false;
+    }
+
+    /**
+     * Returns whether this task description contains the specified keyword.
+     *
+     * @param keyword Keyword to search for.
+     * @return Whether the description contains the keyword.
+     */
+    public boolean hasKeyword(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return description.toLowerCase(Locale.ROOT).contains(normalizedKeyword);
     }
 
     public boolean isDone() {

@@ -43,6 +43,10 @@ public class Esther {
                     break;
                 } else if (command.equals("list")) {
                     ui.showTaskList(tasks);
+                } else if (command.equals("find")
+                        || command.startsWith("find ")) {
+                    String keyword = Parser.parseFindKeyword(command);
+                    ui.showMatchingTasks(tasks.find(keyword));
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     int taskIndex = Parser.parseTaskIndex(
                             command, "mark", tasks.size());

@@ -83,4 +83,17 @@ public class ParserTest {
                 EstherException.class,
                 () -> Parser.parseTask("remind read book"));
     }
+
+    @Test
+    public void parseFindKeyword_validCommand_returnsKeyword()
+            throws EstherException {
+        assertEquals("book", Parser.parseFindKeyword("find book"));
+    }
+
+    @Test
+    public void parseFindKeyword_withoutKeyword_throwsException() {
+        assertThrows(
+                EstherException.class,
+                () -> Parser.parseFindKeyword("find"));
+    }
 }

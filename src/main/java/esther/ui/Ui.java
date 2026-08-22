@@ -1,5 +1,6 @@
 package esther.ui;
 
+import java.util.List;
 import java.util.Scanner;
 
 import esther.task.Task;
@@ -92,6 +93,31 @@ public class Ui {
                     i + 1,
                     tasks.get(i)
             ));
+        }
+
+        showDivider();
+    }
+
+    /**
+     * Shows tasks whose descriptions match a keyword.
+     *
+     * @param matchingTasks Tasks matching the search keyword.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        showDivider();
+
+        if (matchingTasks.isEmpty()) {
+            System.out.println("No matching tasks found.");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println(String.format(
+                        "%d.%s",
+                        i + 1,
+                        matchingTasks.get(i)
+                ));
+            }
         }
 
         showDivider();

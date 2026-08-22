@@ -73,6 +73,25 @@ public final class Parser {
     }
 
     /**
+     * Extracts and validates the keyword from a find command.
+     *
+     * @param command Find command entered by the user.
+     * @return Keyword to search for.
+     * @throws EstherException If no keyword was provided.
+     */
+    public static String parseFindKeyword(String command)
+            throws EstherException {
+        String keyword = command.substring("find".length()).trim();
+
+        if (keyword.isEmpty()) {
+            throw new EstherException(
+                    "Please provide a keyword to search for.");
+        }
+
+        return keyword;
+    }
+
+    /**
      * Creates a todo from its command.
      *
      * @param command Todo command entered by the user.
