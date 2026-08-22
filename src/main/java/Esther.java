@@ -24,16 +24,16 @@ public class Esther {
 
         Scanner scanner = new Scanner(System.in);
 
-        ArrayList<Task> tasks;
+        TaskList tasks;
 
         try {
-            tasks = loadTasks();
+            tasks = new TaskList(loadTasks());
         } catch (IOException | EstherException exception) {
             System.out.println(line);
             System.out.println(
                     "I couldn't load your saved tasks. Starting empty.");
             System.out.println(line);
-            tasks = new ArrayList<>();
+            tasks = new TaskList();
         }
 
         System.out.println(line);
@@ -51,13 +51,7 @@ public class Esther {
                     System.out.println(line);
                     break;
                 } else if (command.equals("list")) {
-                    int tasksLeft = 0;
-
-                    for (int i = 0; i < tasks.size(); i++) {
-                        if (!tasks.get(i).isDone()) {
-                            tasksLeft++;
-                        }
-                    }
+                    int tasksLeft = tasks.countNotDone();
                     System.out.println(line);
 
                     if (tasksLeft == 0) {System.out.println(
@@ -116,7 +110,7 @@ public class Esther {
                     int taskIndex = parseTaskIndex(
                             command, "delete", tasks.size());
 
-                    Task removedTask = tasks.remove(taskIndex);
+                    Task removedTask = tasks.delete(taskIndex);
                     saveTasks(tasks);
                     String taskWord = tasks.size() == 1 ? "task" : "tasks";
 
@@ -339,7 +333,7 @@ public class Esther {
      * @param tasks Tasks to save.
      * @throws IOException If the tasks cannot be saved.
      */
-    private static void saveTasks(ArrayList<Task> tasks)
+    private static void saveTasks(TaskList tasks)
             throws IOException {
         Path parentDirectory = DATA_FILE_PATH.getParent();
         if (parentDirectory != null) {
@@ -347,7 +341,7 @@ public class Esther {
         }
 
         ArrayList<String> taskData = new ArrayList<>();
-        for (Task task : tasks) {
+        for (Task task : tasks.asList()) {
             taskData.add(task.toDataString());
         }
 
