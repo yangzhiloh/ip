@@ -1,7 +1,5 @@
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 /**
@@ -79,7 +77,8 @@ public class Esther {
 
                     System.out.println(line);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                    int taskIndex = Parser.parseTaskIndex(
+                            command, "mark", tasks.size());
                     Task task = tasks.get(taskIndex);
 
                     task.markAsDone();
@@ -90,7 +89,8 @@ public class Esther {
                     System.out.println(" " + task);
                     System.out.println(line);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                    int taskIndex = Parser.parseTaskIndex(
+                            command, "unmark", tasks.size());
                     Task task = tasks.get(taskIndex);
 
                     task.markAsNotDone();
@@ -102,7 +102,7 @@ public class Esther {
                     System.out.println(line);
                 } else if (command.equals("delete")
                         || command.startsWith("delete ")) {
-                    int taskIndex = parseTaskIndex(
+                    int taskIndex = Parser.parseTaskIndex(
                             command, "delete", tasks.size());
 
                     Task removedTask = tasks.delete(taskIndex);
@@ -118,92 +118,7 @@ public class Esther {
                     System.out.println(line);
 
                 } else {
-                    Task task;
-
-                    if (command.equals("todo") || command.startsWith("todo ")) {
-                        String description = command.substring(4).trim();
-
-                        if (description.isEmpty()) {
-                            throw new EstherException(
-                            "... You want to add a task but you're not giving me anything???");
-                        }
-
-                        task = new Todo(description);
-                    } else if (command.equals("deadline")
-                            || command.startsWith("deadline ")) {
-                        int byIndex = command.indexOf(" /by ");
-
-                        if (command.endsWith(" /by")) {
-                            throw new EstherException(
-                                    "HELLO I NEED A TIME OR DATE!");
-                        }
-
-                        if (byIndex == -1) {
-                            throw new EstherException(
-                                    "PLEASEEEEE use this format: deadline DESCRIPTION /by DATE_OR_TIME");
-                        }
-
-                        String description = command.substring(8, byIndex).trim();
-                        String byText = command.substring(byIndex + 5).trim();
-
-                        if (description.isEmpty()) {
-                            throw new EstherException(
-                                    "... You want to add a task but you're not giving me anything???");
-                        }
-
-                        if (byText.isEmpty()) {
-                            throw new EstherException(
-                                    "HELLO I NEED A TIME OR DATE!");
-                        }
-
-                        try {
-                            LocalDate by = LocalDate.parse(byText);
-                            task = new Deadline(description, by);
-                        } catch (DateTimeParseException exception) {
-                            throw new EstherException(
-                                    "Use date format yyyy-MM-dd, "
-                                            + "e.g. 2026-08-30.");
-                        }
-                    } else if (command.equals("event")
-                            || command.startsWith("event ")) {
-                        String fromMarker = " /from";
-                        String toMarker = " /to";
-
-                        int fromIndex = command.indexOf(fromMarker);
-                        int toIndex = command.indexOf(toMarker);
-
-                        if (fromIndex == -1 || toIndex == -1 || toIndex <= fromIndex) {
-                            throw new EstherException(
-                                    "PLEASEEEEEEE use this format: event DESCRIPTION /from START /to END");
-                        }
-
-                        String description = command.substring(5, fromIndex).trim();
-                        String from = command.substring(
-                                fromIndex + fromMarker.length(), toIndex).trim();
-                        String to = command.substring(
-                                toIndex + toMarker.length()).trim();
-
-                        if (description.isEmpty()) {
-                            throw new EstherException(
-                                    "... You want to add a task but you're not giving me anything???");
-                        }
-
-                        if (from.isEmpty()) {
-                            throw new EstherException(
-                                    "HELLO I NEED A STARTING TIME OR DATE!");
-                        }
-
-                        if (to.isEmpty()) {
-                            throw new EstherException(
-                                    "HELLO I NEED AN ENDING TIME OR DATE!");
-                        }
-
-                        task = new Event(description, from, to);
-                    } else {
-                        throw new EstherException(
-                            "You're not speaking my language."
-                        );
-                    }
+                    Task task = Parser.parseTask(command);
 
                     tasks.add(task);
                     storage.save(tasks);
@@ -234,38 +149,4 @@ public class Esther {
 
     }
 
-    /**
-     * Extracts and validates a task number from a command.
-     *
-     * @param command Full command entered by the user.
-     * @param commandWord Command word being processed.
-     * @param taskCount Number of tasks currently stored.
-     * @return Valid zero-based task index.
-     * @throws EstherException If the task number is missing or invalid.
-     */
-    private static int parseTaskIndex(String command, String commandWord,
-            int taskCount) throws EstherException {
-        String numberText = command.substring(commandWord.length()).trim();
-
-        if (numberText.isEmpty()) {
-            throw new EstherException(
-                    "STOP PLAYING! THERES NO NUMBER AT ALL!!");
-        }
-
-        int taskNumber;
-
-        try {
-            taskNumber = Integer.parseInt(numberText);
-        } catch (NumberFormatException exception) {
-            throw new EstherException(
-                    "... NOT A WHOLE NUMBER, ARE YOU KIDDING ME!");
-        }
-
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new EstherException(
-                    "STOP PLAYING! THIS NUMBER DOES NOT EXIST!");
-        }
-
-        return taskNumber - 1;
-    }
 }
