@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -153,19 +155,26 @@ public class Esther {
                         }
 
                         String description = command.substring(8, byIndex).trim();
-                        String by = command.substring(byIndex + 5).trim();
+                        String byText = command.substring(byIndex + 5).trim();
 
                         if (description.isEmpty()) {
                             throw new EstherException(
                                     "... You want to add a task but you're not giving me anything???");
                         }
 
-                        if (by.isEmpty()) {
+                        if (byText.isEmpty()) {
                             throw new EstherException(
                                     "HELLO I NEED A TIME OR DATE!");
                         }
 
-                        task = new Deadline(description, by);
+                        try {
+                            LocalDate by = LocalDate.parse(byText);
+                            task = new Deadline(description, by);
+                        } catch (DateTimeParseException exception) {
+                            throw new EstherException(
+                                    "Use date format yyyy-MM-dd, "
+                                            + "e.g. 2026-08-30.");
+                        }
                     } else if (command.equals("event")
                             || command.startsWith("event ")) {
                         String fromMarker = " /from";
@@ -292,7 +301,13 @@ public class Esther {
                     throw new EstherException(
                             "The data file contains an invalid deadline.");
                 }
-                task = new Deadline(fields[2], fields[3]);
+                try {
+                    LocalDate by = LocalDate.parse(fields[3]);
+                    task = new Deadline(fields[2], by);
+                } catch (DateTimeParseException exception) {
+                    throw new EstherException(
+                            "The data file contains an invalid deadline date.");
+                }
                 break;
             case "E":
                 if (fields.length != 5
