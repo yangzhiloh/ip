@@ -1,4 +1,9 @@
+package esther.ui;
+
 import java.util.Scanner;
+
+import esther.task.Task;
+import esther.task.TaskList;
 
 /**
  * Handles interactions between Esther and the user.

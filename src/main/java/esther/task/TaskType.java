@@ -1,3 +1,5 @@
+package esther.task;
+
 /**
  * Represents the supported types of tasks.
  */

@@ -1,5 +1,14 @@
+package esther;
+
 import java.io.IOException;
 import java.nio.file.Path;
+
+import esther.exception.EstherException;
+import esther.parser.Parser;
+import esther.storage.Storage;
+import esther.task.Task;
+import esther.task.TaskList;
+import esther.ui.Ui;
 
 /**
  * Represents the Esther personal assistant chatbot.
