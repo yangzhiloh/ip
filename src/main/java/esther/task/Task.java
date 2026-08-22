@@ -55,10 +55,10 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-            "[%s][%s] %s",
-            this.type.getSymbol(),
-            getStatusIcon(),
-            this.description
+                "[%s][%s] %s",
+                this.type.getSymbol(),
+                getStatusIcon(),
+                this.description
         );
     }
 }
