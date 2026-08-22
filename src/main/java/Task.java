@@ -40,6 +40,16 @@ public class Task {
         return (isDone ? "X" : " "); // mark done task with X
     }
 
+    /**
+     * Returns this task in the format used by the data file.
+     *
+     * @return Serialized representation of this task.
+     */
+    public String toDataString() {
+        return String.format("%s | %d | %s",
+                type.getSymbol(), isDone ? 1 : 0, description);
+    }
+
     @Override
     public String toString() {
         return String.format(

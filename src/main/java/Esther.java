@@ -1,9 +1,17 @@
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 /**
  * Represents the Esther personal assistant chatbot.
  */
 public class Esther {
+    private static final Path DATA_FILE_PATH =
+            Path.of("data", "esther.txt");
+
     /**
      * Runs Esther's command-line interface.
      *
@@ -14,7 +22,17 @@ public class Esther {
 
         Scanner scanner = new Scanner(System.in);
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks;
+
+        try {
+            tasks = loadTasks();
+        } catch (IOException | EstherException exception) {
+            System.out.println(line);
+            System.out.println(
+                    "I couldn't load your saved tasks. Starting empty.");
+            System.out.println(line);
+            tasks = new ArrayList<>();
+        }
 
         System.out.println(line);
         System.out.println("Heyyyy! I'm your favourite assistant Esther.");
@@ -74,6 +92,7 @@ public class Esther {
                     Task task = tasks.get(taskIndex);
 
                     task.markAsDone();
+                    saveTasks(tasks);
 
                     System.out.println(line);
                     System.out.println("Nice! I've marked this task as done:");
@@ -84,6 +103,7 @@ public class Esther {
                     Task task = tasks.get(taskIndex);
 
                     task.markAsNotDone();
+                    saveTasks(tasks);
 
                     System.out.println(line);
                     System.out.println("Okay! I've marked this task as not done.");
@@ -95,6 +115,7 @@ public class Esther {
                             command, "delete", tasks.size());
 
                     Task removedTask = tasks.remove(taskIndex);
+                    saveTasks(tasks);
                     String taskWord = tasks.size() == 1 ? "task" : "tasks";
 
                     System.out.println(line);
@@ -187,6 +208,7 @@ public class Esther {
                     }
 
                     tasks.add(task);
+                    saveTasks(tasks);
 
                     String taskWord = tasks.size() == 1 ? "task" : "tasks";
 
@@ -202,11 +224,119 @@ public class Esther {
                 System.out.println(exception.getMessage());
                 System.out.println(line);
 
+            } catch (IOException exception) {
+                System.out.println(line);
+                System.out.println(
+                        "I couldn't save your tasks. Please try again.");
+                System.out.println(line);
             }
         }
 
         scanner.close();
 
+    }
+
+    /**
+     * Loads tasks from the data file.
+     *
+     * @return Tasks reconstructed from the data file.
+     * @throws IOException If the data file cannot be read.
+     * @throws EstherException If the data file contains invalid data.
+     */
+    private static ArrayList<Task> loadTasks()
+            throws IOException, EstherException {
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        if (!Files.exists(DATA_FILE_PATH)) {
+            return tasks;
+        }
+
+        for (String taskData : Files.readAllLines(
+                DATA_FILE_PATH, StandardCharsets.UTF_8)) {
+            if (!taskData.isBlank()) {
+                tasks.add(parseTaskData(taskData));
+            }
+        }
+
+        return tasks;
+    }
+
+    /**
+     * Reconstructs one task from its stored representation.
+     *
+     * @param taskData Stored representation of one task.
+     * @return Reconstructed task.
+     * @throws EstherException If the stored representation is invalid.
+     */
+    private static Task parseTaskData(String taskData)
+            throws EstherException {
+        String[] fields = taskData.split(" \\| ", -1);
+
+        if (fields.length < 3 || fields[2].isBlank()) {
+            throw new EstherException(
+                    "The data file contains invalid task data.");
+        }
+
+        Task task;
+
+        switch (fields[0]) {
+            case "T":
+                if (fields.length != 3) {
+                    throw new EstherException(
+                            "The data file contains an invalid todo.");
+                }
+                task = new Todo(fields[2]);
+                break;
+            case "D":
+                if (fields.length != 4 || fields[3].isBlank()) {
+                    throw new EstherException(
+                            "The data file contains an invalid deadline.");
+                }
+                task = new Deadline(fields[2], fields[3]);
+                break;
+            case "E":
+                if (fields.length != 5
+                        || fields[3].isBlank()
+                        || fields[4].isBlank()) {
+                    throw new EstherException(
+                            "The data file contains an invalid event.");
+                }
+                task = new Event(fields[2], fields[3], fields[4]);
+                break;
+            default:
+                throw new EstherException(
+                        "The data file contains an unknown task type.");
+        }
+
+        if (fields[1].equals("1")) {
+            task.markAsDone();
+        } else if (!fields[1].equals("0")) {
+            throw new EstherException(
+                    "The data file contains an invalid task status.");
+        }
+
+        return task;
+    }
+
+    /**
+     * Saves all tasks to the data file.
+     *
+     * @param tasks Tasks to save.
+     * @throws IOException If the tasks cannot be saved.
+     */
+    private static void saveTasks(ArrayList<Task> tasks)
+            throws IOException {
+        Path parentDirectory = DATA_FILE_PATH.getParent();
+        if (parentDirectory != null) {
+            Files.createDirectories(parentDirectory);
+        }
+
+        ArrayList<String> taskData = new ArrayList<>();
+        for (Task task : tasks) {
+            taskData.add(task.toDataString());
+        }
+
+        Files.write(DATA_FILE_PATH, taskData, StandardCharsets.UTF_8);
     }
 
     /**
