@@ -6,8 +6,13 @@ import java.util.Locale;
  * Represents a task tracked by Esther.
  */
 public class Task {
+    /** Description of this task. */
     protected String description;
+
+    /** Whether this task is completed. */
     protected boolean isDone;
+
+    /** Type of this task. */
     protected final TaskType type;
 
     /**
@@ -47,10 +52,20 @@ public class Task {
         return description.toLowerCase(Locale.ROOT).contains(normalizedKeyword);
     }
 
+    /**
+     * Returns whether this task is completed.
+     *
+     * @return Whether this task is completed.
+     */
     public boolean isDone() {
         return this.isDone;
     }
 
+    /**
+     * Returns the status icon for this task.
+     *
+     * @return Status icon.
+     */
     public String getStatusIcon() {
         return (isDone ? "X" : " "); // mark done task with X
     }

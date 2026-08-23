@@ -15,6 +15,12 @@ import esther.ui.Ui;
  */
 public class Esther {
     /**
+     * Creates an Esther application.
+     */
+    public Esther() {
+    }
+
+    /**
      * Runs Esther's command-line interface.
      *
      * @param args Command-line arguments supplied to the application.
