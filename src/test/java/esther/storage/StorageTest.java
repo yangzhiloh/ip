@@ -82,6 +82,24 @@ public class StorageTest {
     }
 
     @Test
+    public void saveAndLoad_descriptionContainingDelimiter_preservesDescription()
+            throws IOException, EstherException {
+        Path dataFile = tempDirectory.resolve("tasks.txt");
+        Storage storage = new Storage(dataFile);
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read | review book"));
+
+        storage.save(tasks);
+
+        TaskList loadedTasks = storage.load();
+
+        assertEquals(1, loadedTasks.size());
+        assertEquals(
+                "T | 0 | read | review book",
+                loadedTasks.get(0).toDataString());
+    }
+
+    @Test
     public void load_fileWithBlankLines_ignoresBlankLines()
             throws IOException, EstherException {
         Path dataFile = tempDirectory.resolve("tasks.txt");

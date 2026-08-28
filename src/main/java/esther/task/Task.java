@@ -77,7 +77,17 @@ public class Task {
      */
     public String toDataString() {
         return String.format("%s | %d | %s",
-                type.getSymbol(), isDone ? 1 : 0, description);
+                type.getSymbol(), isDone ? 1 : 0, escapeDataField(description));
+    }
+
+    /**
+     * Escapes characters that have a special meaning in the data format.
+     *
+     * @param value Field value to escape.
+     * @return Escaped field value.
+     */
+    protected static String escapeDataField(String value) {
+        return value.replace("\\", "\\\\").replace("|", "\\|");
     }
 
     @Override
