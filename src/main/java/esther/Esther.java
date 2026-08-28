@@ -3,10 +3,10 @@ package esther;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import esther.command.CommandProcessor;
+import esther.command.CommandResult;
 import esther.exception.EstherException;
-import esther.parser.Parser;
 import esther.storage.Storage;
-import esther.task.Task;
 import esther.task.TaskList;
 import esther.ui.Ui;
 
@@ -38,63 +38,16 @@ public class Esther {
             tasks = new TaskList();
         }
 
+        CommandProcessor processor = new CommandProcessor(storage, tasks);
         ui.showWelcome();
 
         while (true) {
             String command = ui.readCommand();
+            CommandResult result = processor.process(command);
 
-            try {
-                if (command.equals("bye")) {
-                    ui.showGoodbye();
-                    break;
-                } else if (command.equals("list")) {
-                    ui.showTaskList(tasks);
-                } else if (command.equals("find")
-                        || command.startsWith("find ")) {
-                    String keyword = Parser.parseFindKeyword(command);
-                    ui.showMatchingTasks(tasks.find(keyword));
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    int taskIndex = Parser.parseTaskIndex(
-                            command, "mark", tasks.size());
-                    Task task = tasks.get(taskIndex);
-
-                    task.markAsDone();
-                    storage.save(tasks);
-
-                    ui.showTaskMarked(task);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    int taskIndex = Parser.parseTaskIndex(
-                            command, "unmark", tasks.size());
-                    Task task = tasks.get(taskIndex);
-
-                    task.markAsNotDone();
-                    storage.save(tasks);
-
-                    ui.showTaskUnmarked(task);
-                } else if (command.equals("delete")
-                        || command.startsWith("delete ")) {
-                    int taskIndex = Parser.parseTaskIndex(
-                            command, "delete", tasks.size());
-
-                    Task removedTask = tasks.delete(taskIndex);
-                    storage.save(tasks);
-
-                    ui.showTaskDeleted(removedTask, tasks.size());
-
-                } else {
-                    Task task = Parser.parseTask(command);
-
-                    tasks.add(task);
-                    storage.save(tasks);
-
-                    ui.showTaskAdded(task, tasks.size());
-                }
-
-            } catch (EstherException exception) {
-                ui.showError(exception.getMessage());
-
-            } catch (IOException exception) {
-                ui.showSaveError();
+            ui.showResponse(result.messages());
+            if (result.shouldExit()) {
+                break;
             }
         }
 

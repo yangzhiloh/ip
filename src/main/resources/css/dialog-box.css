@@ -1,0 +1,17 @@
+.dialog-box {
+    -fx-background-color: #dfe9ff;
+    -fx-background-radius: 16;
+    -fx-border-color: #b9c9ed;
+    -fx-border-radius: 16;
+    -fx-spacing: 10;
+}
+
+.dialog-box.esther-dialog {
+    -fx-background-color: #eee3ff;
+    -fx-border-color: #d0b7ef;
+}
+
+.dialog-box .label {
+    -fx-text-fill: #302a3a;
+    -fx-wrap-text: true;
+}
