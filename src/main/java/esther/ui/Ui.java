@@ -204,6 +204,17 @@ public class Ui {
     }
 
     /**
+     * Shows a command processor response with the standard CLI dividers.
+     *
+     * @param messages Response messages to show in order.
+     */
+    public void showResponse(List<String> messages) {
+        showDivider();
+        showToUser(messages.toArray(String[]::new));
+        showDivider();
+    }
+
+    /**
      * Shows one or more messages to the user.
      *
      * @param messages Messages to show, in display order.
