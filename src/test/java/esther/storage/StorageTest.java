@@ -95,7 +95,7 @@ public class StorageTest {
 
         assertEquals(1, loadedTasks.size());
         assertEquals(
-                "T | 0 | read | review book",
+                "T | 0 | read \\| review book",
                 loadedTasks.get(0).toDataString());
     }
 
