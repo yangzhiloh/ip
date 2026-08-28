@@ -36,8 +36,9 @@ public class Ui {
      */
     public void showWelcome() {
         showDivider();
-        System.out.println("Heyyyy! I'm your favourite assistant Esther.");
-        System.out.println("What can I do for you today?");
+        showToUser(
+                "Heyyyy! I'm your favourite assistant Esther.",
+                "What can I do for you today?");
         showDivider();
     }
 
@@ -46,7 +47,7 @@ public class Ui {
      */
     public void showGoodbye() {
         showDivider();
-        System.out.println("Byeee! Hope to see you soooon!");
+        showToUser("Byeee! Hope to see you soooon!");
         showDivider();
     }
 
@@ -55,7 +56,7 @@ public class Ui {
      */
     public void showLoadingError() {
         showDivider();
-        System.out.println(
+        showToUser(
                 "I couldn't load your saved tasks. Starting empty.");
         showDivider();
     }
@@ -71,16 +72,16 @@ public class Ui {
         showDivider();
 
         if (tasksLeft == 0) {
-            System.out.println("WOW! You have no tasks left, good work!");
+            showToUser("WOW! You have no tasks left, good work!");
         } else if (tasksLeft <= 5) {
             String taskWord = getTaskWord(tasksLeft);
-            System.out.println(String.format(
+            showToUser(String.format(
                     "Only %d %s left! Should be a piece of cake for you!",
                     tasksLeft,
                     taskWord
             ));
         } else {
-            System.out.println(String.format(
+            showToUser(String.format(
                     "%d tasks left?? What have you been doing this whole "
                             + "time?? You better focus up!",
                     tasksLeft
@@ -88,7 +89,7 @@ public class Ui {
         }
 
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(String.format(
+            showToUser(String.format(
                     "%d.%s",
                     i + 1,
                     tasks.get(i)
@@ -107,12 +108,12 @@ public class Ui {
         showDivider();
 
         if (matchingTasks.isEmpty()) {
-            System.out.println("No matching tasks found.");
+            showToUser("No matching tasks found.");
         } else {
-            System.out.println("Here are the matching tasks in your list:");
+            showToUser("Here are the matching tasks in your list:");
 
             for (int i = 0; i < matchingTasks.size(); i++) {
-                System.out.println(String.format(
+                showToUser(String.format(
                         "%d.%s",
                         i + 1,
                         matchingTasks.get(i)
@@ -130,8 +131,9 @@ public class Ui {
      */
     public void showTaskMarked(Task task) {
         showDivider();
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println(" " + task);
+        showToUser(
+                "Nice! I've marked this task as done:",
+                " " + task);
         showDivider();
     }
 
@@ -142,8 +144,9 @@ public class Ui {
      */
     public void showTaskUnmarked(Task task) {
         showDivider();
-        System.out.println("Okay! I've marked this task as not done.");
-        System.out.println(" " + task);
+        showToUser(
+                "Okay! I've marked this task as not done.",
+                " " + task);
         showDivider();
     }
 
@@ -155,9 +158,9 @@ public class Ui {
      */
     public void showTaskDeleted(Task task, int taskCount) {
         showDivider();
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + task);
-        System.out.println(
+        showToUser(
+                "Noted. I've removed this task:",
+                "  " + task,
                 "Now you have " + taskCount + " "
                         + getTaskWord(taskCount) + " in the list.");
         showDivider();
@@ -171,9 +174,9 @@ public class Ui {
      */
     public void showTaskAdded(Task task, int taskCount) {
         showDivider();
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println(
+        showToUser(
+                "Got it. I've added this task:",
+                "  " + task,
                 "Now you have " + taskCount + " "
                         + getTaskWord(taskCount) + " in the list.");
         showDivider();
@@ -186,7 +189,7 @@ public class Ui {
      */
     public void showError(String message) {
         showDivider();
-        System.out.println(message);
+        showToUser(message);
         showDivider();
     }
 
@@ -195,9 +198,20 @@ public class Ui {
      */
     public void showSaveError() {
         showDivider();
-        System.out.println(
+        showToUser(
                 "I couldn't save your tasks. Please try again.");
         showDivider();
+    }
+
+    /**
+     * Shows one or more messages to the user.
+     *
+     * @param messages Messages to show, in display order.
+     */
+    public void showToUser(String... messages) {
+        for (String message : messages) {
+            System.out.println(message);
+        }
     }
 
     /**
@@ -211,7 +225,7 @@ public class Ui {
      * Shows the divider used between responses.
      */
     private void showDivider() {
-        System.out.println(DIVIDER);
+        showToUser(DIVIDER);
     }
 
     /**
