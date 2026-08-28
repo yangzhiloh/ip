@@ -49,39 +49,30 @@ public class ParserTest {
 
     @Test
     public void parseTask_todoWithoutDescription_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseTask("todo"));
+        assertThrows(EstherException.class, () -> Parser.parseTask("todo"));
     }
 
     @Test
     public void parseTask_deadlineWithoutByMarker_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseTask("deadline return book 2026-08-30"));
+        assertThrows(EstherException.class, () -> Parser.parseTask(
+                "deadline return book 2026-08-30"));
     }
 
     @Test
     public void parseTask_deadlineWithInvalidDate_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseTask(
-                        "deadline return book /by 30-08-2026"));
+        assertThrows(EstherException.class, () -> Parser.parseTask(
+                "deadline return book /by 30-08-2026"));
     }
 
     @Test
     public void parseTask_eventWithoutEnd_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseTask(
-                        "event project meeting /from 2pm"));
+        assertThrows(EstherException.class, () -> Parser.parseTask(
+                "event project meeting /from 2pm"));
     }
 
     @Test
     public void parseTask_unknownCommand_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseTask("remind read book"));
+        assertThrows(EstherException.class, () -> Parser.parseTask("remind read book"));
     }
 
     @Test
@@ -92,8 +83,6 @@ public class ParserTest {
 
     @Test
     public void parseFindKeyword_withoutKeyword_throwsException() {
-        assertThrows(
-                EstherException.class,
-                () -> Parser.parseFindKeyword("find"));
+        assertThrows(EstherException.class, () -> Parser.parseFindKeyword("find"));
     }
 }
