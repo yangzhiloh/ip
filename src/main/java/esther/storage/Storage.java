@@ -82,9 +82,15 @@ public class Storage {
      * @throws EstherException If the stored representation is invalid.
      */
     private Task parseTaskData(String taskData) throws EstherException {
-        String[] fields = taskData.split(" \\| ", -1);
+        String[] fields = splitTaskData(taskData);
 
-        if (fields.length < 3 || fields[2].isBlank()) {
+        if (fields.length < 3) {
+            throw new EstherException(
+                    "The data file contains invalid task data.");
+        }
+
+        String description = unescapeDataField(fields[2]);
+        if (description.isBlank()) {
             throw new EstherException(
                     "The data file contains invalid task data.");
         }
@@ -97,7 +103,7 @@ public class Storage {
                     throw new EstherException(
                             "The data file contains an invalid todo.");
                 }
-                task = new Todo(fields[2]);
+                task = new Todo(description);
                 break;
             case "D":
                 if (fields.length != 4 || fields[3].isBlank()) {
@@ -106,7 +112,7 @@ public class Storage {
                 }
                 try {
                     LocalDate by = LocalDate.parse(fields[3]);
-                    task = new Deadline(fields[2], by);
+                    task = new Deadline(description, by);
                 } catch (DateTimeParseException exception) {
                     throw new EstherException(
                             "The data file contains an invalid deadline date.");
@@ -119,7 +125,10 @@ public class Storage {
                     throw new EstherException(
                             "The data file contains an invalid event.");
                 }
-                task = new Event(fields[2], fields[3], fields[4]);
+                task = new Event(
+                        description,
+                        unescapeDataField(fields[3]),
+                        unescapeDataField(fields[4]));
                 break;
             default:
                 throw new EstherException(
@@ -134,5 +143,77 @@ public class Storage {
         }
 
         return task;
+    }
+
+    /**
+     * Splits stored task data while preserving escaped delimiter characters.
+     *
+     * @param taskData Stored representation of one task.
+     * @return Fields extracted from the stored representation.
+     * @throws EstherException If an escape sequence is incomplete.
+     */
+    private String[] splitTaskData(String taskData) throws EstherException {
+        ArrayList<String> fields = new ArrayList<>();
+        StringBuilder currentField = new StringBuilder();
+
+        for (int i = 0; i < taskData.length(); i++) {
+            char character = taskData.charAt(i);
+
+            if (character == '\\') {
+                if (i + 1 >= taskData.length()) {
+                    throw new EstherException(
+                            "The data file contains an invalid escape sequence.");
+                }
+                currentField.append(character);
+                currentField.append(taskData.charAt(++i));
+            } else if (character == '|'
+                    && i > 0
+                    && taskData.charAt(i - 1) == ' '
+                    && i + 1 < taskData.length()
+                    && taskData.charAt(i + 1) == ' ') {
+                currentField.setLength(currentField.length() - 1);
+                fields.add(currentField.toString());
+                currentField.setLength(0);
+                i++;
+            } else {
+                currentField.append(character);
+            }
+        }
+
+        fields.add(currentField.toString());
+        return fields.toArray(new String[0]);
+    }
+
+    /**
+     * Restores special characters in an escaped data field.
+     *
+     * @param field Escaped field value.
+     * @return Unescaped field value.
+     * @throws EstherException If the field contains an unsupported escape.
+     */
+    private String unescapeDataField(String field) throws EstherException {
+        StringBuilder unescapedField = new StringBuilder();
+
+        for (int i = 0; i < field.length(); i++) {
+            char character = field.charAt(i);
+            if (character != '\\') {
+                unescapedField.append(character);
+                continue;
+            }
+
+            if (i + 1 >= field.length()) {
+                throw new EstherException(
+                        "The data file contains an invalid escape sequence.");
+            }
+
+            char escapedCharacter = field.charAt(++i);
+            if (escapedCharacter != '\\' && escapedCharacter != '|') {
+                throw new EstherException(
+                        "The data file contains an invalid escape sequence.");
+            }
+            unescapedField.append(escapedCharacter);
+        }
+
+        return unescapedField.toString();
     }
 }
