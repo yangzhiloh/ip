@@ -17,7 +17,7 @@
         <URL value="@../css/dialog-box.css" />
     </stylesheets>
     <children>
-        <Label fx:id="dialog"
+        <Label fx:id="messageLabel"
                minHeight="-Infinity"
                text="Label"
                wrapText="true" />

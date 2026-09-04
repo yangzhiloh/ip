@@ -119,20 +119,19 @@ public final class Parser {
      */
     private static Deadline parseDeadline(String command)
             throws EstherException {
-        int byIndex = command.indexOf(" /by ");
+        int dueDateMarkerIndex = command.indexOf(" /by ");
 
         if (command.endsWith(" /by")) {
             throw new EstherException("HELLO I NEED A TIME OR DATE!");
         }
 
-        if (byIndex == -1) {
+        if (dueDateMarkerIndex == -1) {
             throw new EstherException(
-                    "PLEASEEEEE use this format: deadline DESCRIPTION "
-                            + "/by DATE_OR_TIME");
+                    "PLEASEEEEE use this format: deadline DESCRIPTION /by DATE_OR_TIME");
         }
 
-        String description = command.substring(8, byIndex).trim();
-        String byText = command.substring(byIndex + 5).trim();
+        String description = command.substring(8, dueDateMarkerIndex).trim();
+        String dueDateText = command.substring(dueDateMarkerIndex + 5).trim();
 
         if (description.isEmpty()) {
             throw new EstherException(
@@ -140,13 +139,13 @@ public final class Parser {
                             + "giving me anything???");
         }
 
-        if (byText.isEmpty()) {
+        if (dueDateText.isEmpty()) {
             throw new EstherException("HELLO I NEED A TIME OR DATE!");
         }
 
         try {
-            LocalDate by = LocalDate.parse(byText);
-            return new Deadline(description, by);
+            LocalDate dueDate = LocalDate.parse(dueDateText);
+            return new Deadline(description, dueDate);
         } catch (DateTimeParseException exception) {
             throw new EstherException(
                     "Use date format yyyy-MM-dd, e.g. 2026-08-30.");
@@ -161,22 +160,21 @@ public final class Parser {
      * @throws EstherException If the description, start, or end is empty.
      */
     private static Event parseEvent(String command) throws EstherException {
-        String fromMarker = " /from";
-        String toMarker = " /to";
+        String startMarker = " /from";
+        String endMarker = " /to";
 
-        int fromIndex = command.indexOf(fromMarker);
-        int toIndex = command.indexOf(toMarker);
+        int startIndex = command.indexOf(startMarker);
+        int endIndex = command.indexOf(endMarker);
 
-        if (fromIndex == -1 || toIndex == -1 || toIndex <= fromIndex) {
+        if (startIndex == -1 || endIndex == -1 || endIndex <= startIndex) {
             throw new EstherException(
-                    "PLEASEEEEEEE use this format: event DESCRIPTION "
-                            + "/from START /to END");
+                    "PLEASEEEEEEE use this format: event DESCRIPTION /from START /to END");
         }
 
-        String description = command.substring(5, fromIndex).trim();
-        String from = command.substring(
-                fromIndex + fromMarker.length(), toIndex).trim();
-        String to = command.substring(toIndex + toMarker.length()).trim();
+        String description = command.substring(5, startIndex).trim();
+        String startTime = command.substring(
+                startIndex + startMarker.length(), endIndex).trim();
+        String endTime = command.substring(endIndex + endMarker.length()).trim();
 
         if (description.isEmpty()) {
             throw new EstherException(
@@ -184,16 +182,16 @@ public final class Parser {
                             + "giving me anything???");
         }
 
-        if (from.isEmpty()) {
+        if (startTime.isEmpty()) {
             throw new EstherException(
                     "HELLO I NEED A STARTING TIME OR DATE!");
         }
 
-        if (to.isEmpty()) {
+        if (endTime.isEmpty()) {
             throw new EstherException(
                     "HELLO I NEED AN ENDING TIME OR DATE!");
         }
 
-        return new Event(description, from, to);
+        return new Event(description, startTime, endTime);
     }
 }

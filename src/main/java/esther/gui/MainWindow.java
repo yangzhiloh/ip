@@ -30,7 +30,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private CommandProcessor processor;
+    private CommandProcessor commandProcessor;
     private Image userImage;
     private Image estherImage;
 
@@ -51,7 +51,7 @@ public class MainWindow extends AnchorPane {
      * @param commandProcessor Processor used to execute Esther commands.
      */
     public void setCommandProcessor(CommandProcessor commandProcessor) {
-        processor = commandProcessor;
+        this.commandProcessor = commandProcessor;
     }
 
     /**
@@ -62,7 +62,7 @@ public class MainWindow extends AnchorPane {
     public void showEstherMessages(List<String> messages) {
         for (String message : messages) {
             dialogContainer.getChildren().add(
-                    DialogBox.getEstherDialog(message, estherImage));
+                    DialogBox.createEstherDialog(message, estherImage));
         }
     }
 
@@ -77,8 +77,8 @@ public class MainWindow extends AnchorPane {
         }
 
         dialogContainer.getChildren().add(
-                DialogBox.getUserDialog(input, userImage));
-        CommandResult result = processor.process(input);
+                DialogBox.createUserDialog(input, userImage));
+        CommandResult result = commandProcessor.process(input);
         showEstherMessages(result.messages());
         userInput.clear();
 
