@@ -17,6 +17,11 @@ import esther.task.Todo;
  */
 public class ParserTest {
     @Test
+    public void parseTaskIndex_negativeTaskCount_throwsAssertionError() {
+        assertThrows(AssertionError.class, () -> Parser.parseTaskIndex("mark 1", "mark", -1));
+    }
+
+    @Test
     public void parseTask_validTodo_returnsTodo() throws EstherException {
         Task task = Parser.parseTask("todo read book");
 
