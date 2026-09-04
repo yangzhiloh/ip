@@ -30,8 +30,11 @@ public class TaskList {
      *
      * @param index Zero-based position of the task.
      * @return Task at the specified index.
+     * @throws AssertionError If the index is invalid and assertions are enabled.
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size()
+                : "Task index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -39,8 +42,10 @@ public class TaskList {
      * Adds a task to the list.
      *
      * @param task Task to add.
+     * @throws AssertionError If the task is null and assertions are enabled.
      */
     public void add(Task task) {
+        assert task != null : "Task to add must not be null";
         tasks.add(task);
     }
 
@@ -49,8 +54,11 @@ public class TaskList {
      *
      * @param index Zero-based position of the task.
      * @return Deleted task.
+     * @throws AssertionError If the index is invalid and assertions are enabled.
      */
     public Task delete(int index) {
+        assert index >= 0 && index < tasks.size()
+                : "Task index must refer to an existing task";
         return tasks.remove(index);
     }
 
