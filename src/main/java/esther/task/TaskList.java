@@ -1,6 +1,7 @@
 package esther.task;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -80,6 +81,13 @@ public class TaskList {
         return (int) tasks.stream()
                 .filter(task -> !task.isDone())
                 .count();
+    }
+
+    /**
+     * Stably sorts tasks with incomplete tasks before completed tasks.
+     */
+    public void sortByCompletionStatus() {
+        tasks.sort(Comparator.comparing(Task::isDone));
     }
 
     /**
