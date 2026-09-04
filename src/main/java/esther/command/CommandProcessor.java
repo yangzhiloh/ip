@@ -56,6 +56,8 @@ public class CommandProcessor {
             } else if (command.equals("delete")
                     || command.startsWith("delete ")) {
                 return buildResult(deleteTask(command), false);
+            } else if (command.equals("sort")) {
+                return buildResult(sortTasks(), false);
             }
 
             Task task = Parser.parseTask(command);
@@ -109,6 +111,15 @@ public class CommandProcessor {
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " "
                         + getTaskWord(tasks.size()) + " in the list.");
+    }
+
+    private List<String> sortTasks() throws IOException {
+        tasks.sortByCompletionStatus();
+        storage.save(tasks);
+
+        List<String> messages = getTaskListMessages();
+        messages.set(0, "I've sorted your tasks by completion status:");
+        return messages;
     }
 
     private List<String> getTaskListMessages() {
