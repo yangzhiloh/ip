@@ -19,7 +19,7 @@ import javafx.scene.layout.HBox;
  */
 public class DialogBox extends HBox {
     @FXML
-    private Label dialog;
+    private Label messageLabel;
 
     @FXML
     private ImageView displayPicture;
@@ -37,7 +37,7 @@ public class DialogBox extends HBox {
         }
 
         getStyleClass().add("dialog-box");
-        dialog.setText(text);
+        messageLabel.setText(text);
         displayPicture.setImage(image);
     }
 
@@ -48,7 +48,7 @@ public class DialogBox extends HBox {
      * @param image User avatar.
      * @return User dialog box.
      */
-    public static DialogBox getUserDialog(String text, Image image) {
+    public static DialogBox createUserDialog(String text, Image image) {
         return new DialogBox(text, image);
     }
 
@@ -59,7 +59,7 @@ public class DialogBox extends HBox {
      * @param image Esther avatar.
      * @return Esther dialog box.
      */
-    public static DialogBox getEstherDialog(String text, Image image) {
+    public static DialogBox createEstherDialog(String text, Image image) {
         DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
         return dialogBox;

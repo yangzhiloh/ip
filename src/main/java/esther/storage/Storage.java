@@ -19,6 +19,13 @@ import esther.task.Todo;
  * Loads tasks from and saves tasks to a data file.
  */
 public class Storage {
+    private static final int TYPE_FIELD_INDEX = 0;
+    private static final int STATUS_FIELD_INDEX = 1;
+    private static final int DESCRIPTION_FIELD_INDEX = 2;
+    private static final int DEADLINE_DATE_FIELD_INDEX = 3;
+    private static final int EVENT_START_FIELD_INDEX = 3;
+    private static final int EVENT_END_FIELD_INDEX = 4;
+
     private final Path filePath;
 
     /**
@@ -84,12 +91,12 @@ public class Storage {
     private Task parseTaskData(String taskData) throws EstherException {
         String[] fields = splitTaskData(taskData);
 
-        if (fields.length < 3) {
+        if (fields.length < DESCRIPTION_FIELD_INDEX + 1) {
             throw new EstherException(
                     "The data file contains invalid task data.");
         }
 
-        String description = unescapeDataField(fields[2]);
+        String description = unescapeDataField(fields[DESCRIPTION_FIELD_INDEX]);
         if (description.isBlank()) {
             throw new EstherException(
                     "The data file contains invalid task data.");
@@ -97,47 +104,48 @@ public class Storage {
 
         Task task;
 
-        switch (fields[0]) {
+        switch (fields[TYPE_FIELD_INDEX]) {
             case "T":
-                if (fields.length != 3) {
+                if (fields.length != DESCRIPTION_FIELD_INDEX + 1) {
                     throw new EstherException(
                             "The data file contains an invalid todo.");
                 }
                 task = new Todo(description);
                 break;
             case "D":
-                if (fields.length != 4 || fields[3].isBlank()) {
+                if (fields.length != DEADLINE_DATE_FIELD_INDEX + 1
+                        || fields[DEADLINE_DATE_FIELD_INDEX].isBlank()) {
                     throw new EstherException(
                             "The data file contains an invalid deadline.");
                 }
                 try {
-                    LocalDate by = LocalDate.parse(fields[3]);
-                    task = new Deadline(description, by);
+                    LocalDate dueDate = LocalDate.parse(fields[DEADLINE_DATE_FIELD_INDEX]);
+                    task = new Deadline(description, dueDate);
                 } catch (DateTimeParseException exception) {
                     throw new EstherException(
                             "The data file contains an invalid deadline date.");
                 }
                 break;
             case "E":
-                if (fields.length != 5
-                        || fields[3].isBlank()
-                        || fields[4].isBlank()) {
+                if (fields.length != EVENT_END_FIELD_INDEX + 1
+                        || fields[EVENT_START_FIELD_INDEX].isBlank()
+                        || fields[EVENT_END_FIELD_INDEX].isBlank()) {
                     throw new EstherException(
                             "The data file contains an invalid event.");
                 }
                 task = new Event(
                         description,
-                        unescapeDataField(fields[3]),
-                        unescapeDataField(fields[4]));
+                        unescapeDataField(fields[EVENT_START_FIELD_INDEX]),
+                        unescapeDataField(fields[EVENT_END_FIELD_INDEX]));
                 break;
             default:
                 throw new EstherException(
                         "The data file contains an unknown task type.");
         }
 
-        if (fields[1].equals("1")) {
+        if (fields[STATUS_FIELD_INDEX].equals("1")) {
             task.markAsDone();
-        } else if (!fields[1].equals("0")) {
+        } else if (!fields[STATUS_FIELD_INDEX].equals("0")) {
             throw new EstherException(
                     "The data file contains an invalid task status.");
         }

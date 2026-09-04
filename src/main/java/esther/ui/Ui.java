@@ -56,8 +56,7 @@ public class Ui {
      */
     public void showLoadingError() {
         showDivider();
-        showToUser(
-                "I couldn't load your saved tasks. Starting empty.");
+        showToUser("I couldn't load your saved tasks. Starting empty.");
         showDivider();
     }
 

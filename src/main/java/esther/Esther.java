@@ -38,12 +38,12 @@ public class Esther {
             tasks = new TaskList();
         }
 
-        CommandProcessor processor = new CommandProcessor(storage, tasks);
+        CommandProcessor commandProcessor = new CommandProcessor(storage, tasks);
         ui.showWelcome();
 
         while (true) {
             String command = ui.readCommand();
-            CommandResult result = processor.process(command);
+            CommandResult result = commandProcessor.process(command);
 
             ui.showResponse(result.messages());
             if (result.shouldExit()) {

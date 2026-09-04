@@ -34,14 +34,14 @@ public class Main extends Application {
             tasks = new TaskList();
         }
 
-        CommandProcessor processor = new CommandProcessor(storage, tasks);
+        CommandProcessor commandProcessor = new CommandProcessor(storage, tasks);
 
         try {
             FXMLLoader loader = new FXMLLoader(
                     Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             MainWindow mainWindow = loader.getController();
-            mainWindow.setCommandProcessor(processor);
+            mainWindow.setCommandProcessor(commandProcessor);
 
             Scene scene = new Scene(root, 400, 600);
 
