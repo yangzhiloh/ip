@@ -40,36 +40,36 @@ public class CommandProcessor {
     public CommandResult process(String command) {
         try {
             if (command.equals("bye")) {
-                return result(List.of(
+                return buildResult(List.of(
                         "Byeee! Hope to see you soooon!"), true);
             } else if (command.equals("list")) {
-                return result(getTaskListMessages(), false);
+                return buildResult(getTaskListMessages(), false);
             } else if (command.equals("find")
                     || command.startsWith("find ")) {
                 String keyword = Parser.parseFindKeyword(command);
-                return result(getMatchingTaskMessages(tasks.find(keyword)), false);
+                return buildResult(getMatchingTaskMessages(tasks.find(keyword)), false);
             } else if (command.equals("mark") || command.startsWith("mark ")) {
-                return result(markTask(command), false);
+                return buildResult(markTask(command), false);
             } else if (command.equals("unmark")
                     || command.startsWith("unmark ")) {
-                return result(unmarkTask(command), false);
+                return buildResult(unmarkTask(command), false);
             } else if (command.equals("delete")
                     || command.startsWith("delete ")) {
-                return result(deleteTask(command), false);
+                return buildResult(deleteTask(command), false);
             }
 
             Task task = Parser.parseTask(command);
             tasks.add(task);
             storage.save(tasks);
-            return result(List.of(
+            return buildResult(List.of(
                     "Got it. I've added this task:",
                     "  " + task,
                     "Now you have " + tasks.size() + " "
                             + getTaskWord(tasks.size()) + " in the list."), false);
         } catch (EstherException exception) {
-            return result(List.of(exception.getMessage()), false);
+            return buildResult(List.of(exception.getMessage()), false);
         } catch (IOException exception) {
-            return result(List.of(SAVE_ERROR), false);
+            return buildResult(List.of(SAVE_ERROR), false);
         }
     }
 
@@ -153,7 +153,7 @@ public class CommandProcessor {
         return messages;
     }
 
-    private CommandResult result(List<String> messages, boolean shouldExit) {
+    private CommandResult buildResult(List<String> messages, boolean shouldExit) {
         return new CommandResult(messages, shouldExit);
     }
 
