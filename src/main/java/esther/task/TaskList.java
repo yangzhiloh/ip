@@ -77,15 +77,9 @@ public class TaskList {
      * @return Number of incomplete tasks.
      */
     public int countNotDone() {
-        int tasksLeft = 0;
-
-        for (Task task : tasks) {
-            if (!task.isDone()) {
-                tasksLeft++;
-            }
-        }
-
-        return tasksLeft;
+        return (int) tasks.stream()
+                .filter(task -> !task.isDone())
+                .count();
     }
 
     /**
@@ -95,15 +89,9 @@ public class TaskList {
      * @return Matching tasks.
      */
     public List<Task> find(String keyword) {
-        List<Task> matchingTasks = new ArrayList<>();
-
-        for (Task task : tasks) {
-            if (task.hasKeyword(keyword)) {
-                matchingTasks.add(task);
-            }
-        }
-
-        return List.copyOf(matchingTasks);
+        return tasks.stream()
+                .filter(task -> task.hasKeyword(keyword))
+                .toList();
     }
 
     /**
