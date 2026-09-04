@@ -45,9 +45,12 @@ public final class Parser {
      * @param taskCount Number of tasks currently stored.
      * @return Valid zero-based task index.
      * @throws EstherException If the task number is missing or invalid.
+     * @throws AssertionError If the task count is negative and assertions are enabled.
      */
     public static int parseTaskIndex(String command, String commandWord,
             int taskCount) throws EstherException {
+        assert taskCount >= 0 : "Task count must not be negative";
+
         String numberText = command.substring(commandWord.length()).trim();
 
         if (numberText.isEmpty()) {
