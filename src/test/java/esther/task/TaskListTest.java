@@ -1,6 +1,7 @@
 package esther.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -18,6 +19,27 @@ public class TaskListTest {
                 new Todo("Buy milk")));
 
         assertEquals(2, taskList.countNotDone());
+    }
+
+    @Test
+    public void add_nullTask_throwsAssertionError() {
+        TaskList taskList = new TaskList();
+
+        assertThrows(AssertionError.class, () -> taskList.add(null));
+    }
+
+    @Test
+    public void get_outOfBoundsIndex_throwsAssertionError() {
+        TaskList taskList = new TaskList(List.of(new Todo("Read a book")));
+
+        assertThrows(AssertionError.class, () -> taskList.get(1));
+    }
+
+    @Test
+    public void delete_negativeIndex_throwsAssertionError() {
+        TaskList taskList = new TaskList(List.of(new Todo("Read a book")));
+
+        assertThrows(AssertionError.class, () -> taskList.delete(-1));
     }
 
     @Test
