@@ -66,6 +66,15 @@ public class MainWindow extends AnchorPane {
         }
     }
 
+    private void showEstherMessages(List<String> messages, boolean isError) {
+        for (String message : messages) {
+            DialogBox dialogBox = isError
+                    ? DialogBox.createErrorDialog(message, estherImage)
+                    : DialogBox.createEstherDialog(message, estherImage);
+            dialogContainer.getChildren().add(dialogBox);
+        }
+    }
+
     /**
      * Processes the current input and displays the response.
      */
@@ -84,15 +93,6 @@ public class MainWindow extends AnchorPane {
 
         if (result.shouldExit() && userInput.getScene() != null) {
             userInput.getScene().getWindow().hide();
-        }
-    }
-
-    private void showEstherMessages(List<String> messages, boolean isError) {
-        for (String message : messages) {
-            DialogBox dialogBox = isError
-                    ? DialogBox.createErrorDialog(message, estherImage)
-                    : DialogBox.createEstherDialog(message, estherImage);
-            dialogContainer.getChildren().add(dialogBox);
         }
     }
 
