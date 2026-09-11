@@ -131,6 +131,77 @@ public class CommandProcessorTest {
         assertEquals("[T][X] submit form", loadedTasks.get(1).toString());
     }
 
+    @Test
+    public void processMark_marksTaskAndPersistsStatus()
+            throws IOException, EstherException {
+        Todo task = new Todo("submit form");
+        Storage storage = new Storage(
+                temporaryDirectory.resolve("tasks.txt"));
+        CommandProcessor processor = new CommandProcessor(
+                storage, new TaskList(List.of(task)));
+
+        CommandResult result = processor.process("mark 1");
+
+        assertFalse(result.isError());
+        assertTrue(result.messages().get(0).contains("marked this task as done"));
+        assertTrue(task.isDone());
+        assertTrue(storage.load().get(0).isDone());
+    }
+
+    @Test
+    public void processUnmark_unmarksTaskAndPersistsStatus()
+            throws IOException, EstherException {
+        Todo task = new Todo("submit form");
+        task.markAsDone();
+        Storage storage = new Storage(
+                temporaryDirectory.resolve("tasks.txt"));
+        CommandProcessor processor = new CommandProcessor(
+                storage, new TaskList(List.of(task)));
+
+        CommandResult result = processor.process("unmark 1");
+
+        assertFalse(result.isError());
+        assertEquals(
+                "Oops, back onto the unfinished pile it goes:",
+                result.messages().get(0));
+        assertFalse(task.isDone());
+        assertFalse(storage.load().get(0).isDone());
+    }
+
+    @Test
+    public void processDelete_removesTaskAndPersistsRemoval()
+            throws IOException, EstherException {
+        Storage storage = new Storage(
+                temporaryDirectory.resolve("tasks.txt"));
+        CommandProcessor processor = new CommandProcessor(
+                storage, new TaskList(List.of(new Todo("submit form"))));
+
+        CommandResult result = processor.process("delete 1");
+
+        assertFalse(result.isError());
+        assertEquals(
+                "Poof! This task is officially gone:",
+                result.messages().get(0));
+        assertEquals(0, storage.load().size());
+    }
+
+    @Test
+    public void processFind_returnsMatchingTasks() throws IOException, EstherException {
+        Storage storage = new Storage(
+                temporaryDirectory.resolve("tasks.txt"));
+        CommandProcessor processor = new CommandProcessor(
+                storage,
+                new TaskList(List.of(
+                        new Todo("read book"), new Todo("buy milk"))));
+
+        CommandResult result = processor.process("find book");
+
+        assertFalse(result.isError());
+        assertEquals(
+                List.of("Found them! Here's what matched:", "1.[T][ ] read book"),
+                result.messages());
+    }
+
     private CommandProcessor newProcessor() {
         Storage storage = new Storage(
                 temporaryDirectory.resolve("tasks.txt"));
