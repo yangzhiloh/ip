@@ -72,6 +72,20 @@ public class CommandProcessorTest {
     }
 
     @Test
+    public void processCommand_withSurroundingWhitespace_processesCommand()
+            throws IOException, EstherException {
+        Storage storage = new Storage(
+                temporaryDirectory.resolve("tasks.txt"));
+        CommandProcessor processor = new CommandProcessor(
+                storage, new TaskList());
+
+        CommandResult result = processor.process("  todo read book  ");
+
+        assertFalse(result.isError());
+        assertEquals("[T][ ] read book", storage.load().get(0).toString());
+    }
+
+    @Test
     public void processSort_mixedStatuses_reordersTasksStably()
             throws IOException, EstherException {
         Task completedFirst = new Todo("submit form");

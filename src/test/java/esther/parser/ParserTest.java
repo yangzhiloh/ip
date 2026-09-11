@@ -70,9 +70,70 @@ public class ParserTest {
     }
 
     @Test
+    public void parseTask_deadlineWithRepeatedByMarker_throwsClearException() {
+        EstherException exception = assertThrows(
+                EstherException.class, () -> Parser.parseTask(
+                        "deadline return book /by 2026-08-30 /by 2026-09-01"));
+
+        assertEquals("Please specify /by only once.", exception.getMessage());
+    }
+
+    @Test
+    public void parseTask_deadlineWithMarkerPrefixInDescription_returnsDeadline()
+            throws EstherException {
+        Task task = Parser.parseTask(
+                "deadline visit /bypass archive /by 2026-09-30");
+
+        assertEquals(
+                "D | 0 | visit /bypass archive | 2026-09-30",
+                task.toDataString());
+    }
+
+    @Test
     public void parseTask_eventWithoutEnd_throwsException() {
         assertThrows(EstherException.class, () -> Parser.parseTask(
                 "event project meeting /from 2pm"));
+    }
+
+    @Test
+    public void parseTask_eventWithRepeatedFromMarker_throwsClearException() {
+        EstherException exception = assertThrows(
+                EstherException.class, () -> Parser.parseTask(
+                        "event meeting /from Monday /from Tuesday /to Friday"));
+
+        assertEquals("Please specify /from only once.", exception.getMessage());
+    }
+
+    @Test
+    public void parseTask_eventWithRepeatedToMarker_throwsClearException() {
+        EstherException exception = assertThrows(
+                EstherException.class, () -> Parser.parseTask(
+                        "event meeting /from Monday /to Friday /to Saturday"));
+
+        assertEquals("Please specify /to only once.", exception.getMessage());
+    }
+
+    @Test
+    public void parseTask_eventWithMarkerPrefixInDescription_returnsEvent()
+            throws EstherException {
+        Task task = Parser.parseTask(
+                "event check /today plan /from Monday /to Friday");
+
+        assertEquals(
+                "E | 0 | check /today plan | Monday | Friday",
+                task.toDataString());
+    }
+
+    @Test
+    public void parseTask_eventWithSameStartAndEndDate_throwsException() {
+        assertThrows(EstherException.class, () -> Parser.parseTask(
+                "event holiday /from 2026-09-12 /to 2026-09-12"));
+    }
+
+    @Test
+    public void parseTask_eventWithEndDateBeforeStartDate_throwsException() {
+        assertThrows(EstherException.class, () -> Parser.parseTask(
+                "event holiday /from 2026-09-13 /to 2026-09-12"));
     }
 
     @Test

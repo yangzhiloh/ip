@@ -132,4 +132,21 @@ public class StorageTest {
 
         assertThrows(EstherException.class, storage::load);
     }
+
+    @Test
+    public void load_invalidSecondLine_reportsLineNumber() throws IOException {
+        Path dataFile = tempDirectory.resolve("tasks.txt");
+        Files.write(
+                dataFile,
+                List.of(
+                        "T | 0 | read book",
+                        "D | 0 | return book | 30-08-2026"),
+                StandardCharsets.UTF_8);
+        Storage storage = new Storage(dataFile);
+
+        EstherException exception = assertThrows(
+                EstherException.class, storage::load);
+
+        assertTrue(exception.getMessage().contains("line 2"));
+    }
 }

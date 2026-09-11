@@ -124,6 +124,10 @@ public final class Parser {
             throws EstherException {
         int dueDateMarkerIndex = command.indexOf(" /by ");
 
+        if (hasRepeatedMarker(command, "/by")) {
+            throw new EstherException("Please specify /by only once.");
+        }
+
         if (command.endsWith(" /by")) {
             throw new EstherException("HELLO I NEED A TIME OR DATE!");
         }
@@ -163,11 +167,19 @@ public final class Parser {
      * @throws EstherException If the description, start, or end is empty.
      */
     private static Event parseEvent(String command) throws EstherException {
-        String startMarker = " /from";
-        String endMarker = " /to";
+        String startMarker = "/from";
+        String endMarker = "/to";
 
-        int startIndex = command.indexOf(startMarker);
-        int endIndex = command.indexOf(endMarker);
+        int startIndex = findMarkerIndex(command, startMarker);
+        int endIndex = findMarkerIndex(command, endMarker);
+
+        if (hasRepeatedMarker(command, "/from")) {
+            throw new EstherException("Please specify /from only once.");
+        }
+
+        if (hasRepeatedMarker(command, "/to")) {
+            throw new EstherException("Please specify /to only once.");
+        }
 
         if (startIndex == -1 || endIndex == -1 || endIndex <= startIndex) {
             throw new EstherException(
@@ -195,6 +207,89 @@ public final class Parser {
                     "HELLO I NEED AN ENDING TIME OR DATE!");
         }
 
+        validateEventDateOrder(startTime, endTime);
+
         return new Event(description, startTime, endTime);
+    }
+
+    /**
+     * Returns whether a command contains a parameter marker more than once.
+     *
+     * @param command Command to inspect.
+     * @param marker Parameter marker to find.
+     * @return True if the marker occurs more than once.
+     */
+    private static boolean hasRepeatedMarker(String command, String marker) {
+        int markerCount = 0;
+        int searchStartIndex = 0;
+        int markerIndex;
+
+        while ((markerIndex = command.indexOf(marker, searchStartIndex)) != -1) {
+            int markerEndIndex = markerIndex + marker.length();
+            boolean hasLeftBoundary = markerIndex == 0
+                    || Character.isWhitespace(command.charAt(markerIndex - 1));
+            boolean hasRightBoundary = markerEndIndex == command.length()
+                    || Character.isWhitespace(command.charAt(markerEndIndex));
+
+            if (hasLeftBoundary && hasRightBoundary && ++markerCount > 1) {
+                return true;
+            }
+
+            searchStartIndex = markerEndIndex;
+        }
+
+        return false;
+    }
+
+    /**
+     * Finds the first standalone occurrence of a parameter marker.
+     *
+     * @param command Command to inspect.
+     * @param marker Parameter marker to find.
+     * @return Marker index, or -1 if no standalone marker exists.
+     */
+    private static int findMarkerIndex(String command, String marker) {
+        int searchStartIndex = 0;
+        int markerIndex = command.indexOf(marker, searchStartIndex);
+
+        while (markerIndex != -1) {
+            int markerEndIndex = markerIndex + marker.length();
+            boolean hasLeftBoundary = markerIndex == 0
+                    || Character.isWhitespace(command.charAt(markerIndex - 1));
+            boolean hasRightBoundary = markerEndIndex == command.length()
+                    || Character.isWhitespace(command.charAt(markerEndIndex));
+
+            if (hasLeftBoundary && hasRightBoundary) {
+                return markerIndex;
+            }
+
+            searchStartIndex = markerEndIndex;
+            markerIndex = command.indexOf(marker, searchStartIndex);
+        }
+
+        return -1;
+    }
+
+    /**
+     * Validates the order when both event times use ISO dates.
+     * Non-date event times remain supported.
+     *
+     * @param startTime Event start value.
+     * @param endTime Event end value.
+     * @throws EstherException If the end date is not after the start date.
+     */
+    private static void validateEventDateOrder(String startTime, String endTime)
+            throws EstherException {
+        try {
+            LocalDate startDate = LocalDate.parse(startTime);
+            LocalDate endDate = LocalDate.parse(endTime);
+
+            if (!startDate.isBefore(endDate)) {
+                throw new EstherException(
+                        "The event end date must be after its start date.");
+            }
+        } catch (DateTimeParseException exception) {
+            // Event times can be free-form text, such as "2pm".
+        }
     }
 }
