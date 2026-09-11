@@ -15,7 +15,7 @@ import esther.task.TaskList;
  */
 public class CommandProcessor {
     private static final String SAVE_ERROR =
-            "I couldn't save your tasks. Please try again.";
+            "Uh-oh, I couldn't save your tasks. Please try again before they escape!";
 
     private final Storage storage;
     private final TaskList tasks;
@@ -66,10 +66,11 @@ public class CommandProcessor {
             tasks.add(task);
             storage.save(tasks);
             return buildResult(List.of(
-                    "Got it. I've added this task:",
+                    "Yesss, consider it added:",
                     "  " + task,
-                    "Now you have " + tasks.size() + " "
-                            + getTaskWord(tasks.size()) + " in the list."), false);
+                    "Your list now has " + tasks.size() + " "
+                            + getTaskWord(tasks.size())
+                            + ". I'm keeping track, obviously."), false);
         } catch (EstherException exception) {
             return buildErrorResult(List.of(exception.getMessage()));
         } catch (IOException exception) {
@@ -97,7 +98,7 @@ public class CommandProcessor {
         storage.save(tasks);
 
         return List.of(
-                "Okay! I've marked this task as not done.",
+                "Oops, back onto the unfinished pile it goes:",
                 " " + task);
     }
 
@@ -109,10 +110,11 @@ public class CommandProcessor {
         storage.save(tasks);
 
         return List.of(
-                "Noted. I've removed this task:",
+                "Poof! This task is officially gone:",
                 "  " + removedTask,
-                "Now you have " + tasks.size() + " "
-                        + getTaskWord(tasks.size()) + " in the list.");
+                "Your list now has " + tasks.size() + " "
+                        + getTaskWord(tasks.size())
+                        + ". I'm keeping track, obviously.");
     }
 
     private List<String> sortTasks() throws IOException {
@@ -120,7 +122,8 @@ public class CommandProcessor {
         storage.save(tasks);
 
         List<String> messages = getTaskListMessages();
-        messages.set(0, "I've sorted your tasks by completion status:");
+        messages.set(0,
+                "Tadaa! Unfinished business first, completed victories after:");
         return messages;
     }
 
@@ -153,9 +156,10 @@ public class CommandProcessor {
         List<String> messages = new ArrayList<>();
 
         if (matchingTasks.isEmpty()) {
-            messages.add("No matching tasks found.");
+            messages.add(
+                    "I searched everywhere, but that task is playing hide-and-seek.");
         } else {
-            messages.add("Here are the matching tasks in your list:");
+            messages.add("Found them! Here's what matched:");
 
             for (int i = 0; i < matchingTasks.size(); i++) {
                 messages.add(String.format(

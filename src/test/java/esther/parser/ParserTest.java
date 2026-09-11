@@ -75,7 +75,9 @@ public class ParserTest {
                 EstherException.class, () -> Parser.parseTask(
                         "deadline return book /by 2026-08-30 /by 2026-09-01"));
 
-        assertEquals("Please specify /by only once.", exception.getMessage());
+        assertEquals(
+                "One deadline, one /by. You gave me too many!",
+                exception.getMessage());
     }
 
     @Test
@@ -101,7 +103,9 @@ public class ParserTest {
                 EstherException.class, () -> Parser.parseTask(
                         "event meeting /from Monday /from Tuesday /to Friday"));
 
-        assertEquals("Please specify /from only once.", exception.getMessage());
+        assertEquals(
+                "I only need one /from. I cant time-travel bestie!",
+                exception.getMessage());
     }
 
     @Test
@@ -110,7 +114,7 @@ public class ParserTest {
                 EstherException.class, () -> Parser.parseTask(
                         "event meeting /from Monday /to Friday /to Saturday"));
 
-        assertEquals("Please specify /to only once.", exception.getMessage());
+        assertEquals("One /to is enough, promise!", exception.getMessage());
     }
 
     @Test
@@ -126,8 +130,14 @@ public class ParserTest {
 
     @Test
     public void parseTask_eventWithSameStartAndEndDate_throwsException() {
-        assertThrows(EstherException.class, () -> Parser.parseTask(
-                "event holiday /from 2026-09-12 /to 2026-09-12"));
+        EstherException exception = assertThrows(
+                EstherException.class, () -> Parser.parseTask(
+                        "event holiday /from 2026-09-12 /to 2026-09-12"));
+
+        assertEquals(
+                "Bestie, this event must end after it starts. "
+                        + "I'm organised, not a time traveller!",
+                exception.getMessage());
     }
 
     @Test
@@ -138,7 +148,12 @@ public class ParserTest {
 
     @Test
     public void parseTask_unknownCommand_throwsException() {
-        assertThrows(EstherException.class, () -> Parser.parseTask("remind read book"));
+        EstherException exception = assertThrows(
+                EstherException.class, () -> Parser.parseTask("remind read book"));
+
+        assertEquals(
+                "Bestie, you're not speaking my language.",
+                exception.getMessage());
     }
 
     @Test

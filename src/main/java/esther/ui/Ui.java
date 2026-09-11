@@ -56,7 +56,9 @@ public class Ui {
      */
     public void showLoadingError() {
         showDivider();
-        showToUser("I couldn't load your saved tasks. Starting empty.");
+        showToUser(
+                "Uh-oh, your saved tasks wouldn't load, "
+                        + "so we're starting with a fresh list.");
         showDivider();
     }
 
@@ -107,9 +109,10 @@ public class Ui {
         showDivider();
 
         if (matchingTasks.isEmpty()) {
-            showToUser("No matching tasks found.");
+            showToUser(
+                    "I searched everywhere, but that task is playing hide-and-seek.");
         } else {
-            showToUser("Here are the matching tasks in your list:");
+            showToUser("Found them! Here's what matched:");
 
             for (int i = 0; i < matchingTasks.size(); i++) {
                 showToUser(String.format(
@@ -144,7 +147,7 @@ public class Ui {
     public void showTaskUnmarked(Task task) {
         showDivider();
         showToUser(
-                "Okay! I've marked this task as not done.",
+                "Oops, back onto the unfinished pile it goes:",
                 " " + task);
         showDivider();
     }
@@ -158,10 +161,11 @@ public class Ui {
     public void showTaskDeleted(Task task, int taskCount) {
         showDivider();
         showToUser(
-                "Noted. I've removed this task:",
+                "Poof! This task is officially gone:",
                 "  " + task,
-                "Now you have " + taskCount + " "
-                        + getTaskWord(taskCount) + " in the list.");
+                "Your list now has " + taskCount + " "
+                        + getTaskWord(taskCount)
+                        + ". I'm keeping track, obviously.");
         showDivider();
     }
 
@@ -174,10 +178,11 @@ public class Ui {
     public void showTaskAdded(Task task, int taskCount) {
         showDivider();
         showToUser(
-                "Got it. I've added this task:",
+                "Yesss, consider it added:",
                 "  " + task,
-                "Now you have " + taskCount + " "
-                        + getTaskWord(taskCount) + " in the list.");
+                "Your list now has " + taskCount + " "
+                        + getTaskWord(taskCount)
+                        + ". I'm keeping track, obviously.");
         showDivider();
     }
 
@@ -198,7 +203,8 @@ public class Ui {
     public void showSaveError() {
         showDivider();
         showToUser(
-                "I couldn't save your tasks. Please try again.");
+                "Uh-oh, I couldn't save your tasks. "
+                        + "Please try again before they escape!");
         showDivider();
     }
 

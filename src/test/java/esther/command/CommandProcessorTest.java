@@ -34,7 +34,7 @@ public class CommandProcessorTest {
         assertFalse(result.shouldExit());
         assertFalse(result.isError());
         assertTrue(result.messages().stream().anyMatch(
-                message -> message.contains("I've added this task")));
+                message -> message.contains("consider it added")));
     }
 
     @Test
@@ -104,7 +104,8 @@ public class CommandProcessorTest {
 
         CommandResult result = processor.process("sort");
 
-        assertEquals("I've sorted your tasks by completion status:",
+        assertEquals(
+                "Tadaa! Unfinished business first, completed victories after:",
                 result.messages().get(0));
         assertEquals(
                 List.of(incompleteFirst, incompleteSecond,
