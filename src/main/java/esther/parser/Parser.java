@@ -34,7 +34,8 @@ public final class Parser {
             return parseEvent(command);
         }
 
-        throw new EstherException("You're not speaking my language.");
+        throw new EstherException(
+                "Bestie, you're not speaking my language.");
     }
 
     /**
@@ -88,7 +89,7 @@ public final class Parser {
 
         if (keyword.isEmpty()) {
             throw new EstherException(
-                    "Please provide a keyword to search for.");
+                    "Bestie, what am I supposed to search for? Give me a keyword!");
         }
 
         return keyword;
@@ -125,7 +126,8 @@ public final class Parser {
         int dueDateMarkerIndex = command.indexOf(" /by ");
 
         if (hasRepeatedMarker(command, "/by")) {
-            throw new EstherException("Please specify /by only once.");
+            throw new EstherException(
+                    "One deadline, one /by. You gave me too many!");
         }
 
         if (command.endsWith(" /by")) {
@@ -155,7 +157,7 @@ public final class Parser {
             return new Deadline(description, dueDate);
         } catch (DateTimeParseException exception) {
             throw new EstherException(
-                    "Use date format yyyy-MM-dd, e.g. 2026-08-30.");
+                    "That date is confusing me. Use yyyy-MM-dd, like 2026-08-30!");
         }
     }
 
@@ -174,11 +176,12 @@ public final class Parser {
         int endIndex = findMarkerIndex(command, endMarker);
 
         if (hasRepeatedMarker(command, "/from")) {
-            throw new EstherException("Please specify /from only once.");
+            throw new EstherException(
+                    "I only need one /from. I cant time-travel bestie!");
         }
 
         if (hasRepeatedMarker(command, "/to")) {
-            throw new EstherException("Please specify /to only once.");
+            throw new EstherException("One /to is enough, promise!");
         }
 
         if (startIndex == -1 || endIndex == -1 || endIndex <= startIndex) {
@@ -286,7 +289,8 @@ public final class Parser {
 
             if (!startDate.isBefore(endDate)) {
                 throw new EstherException(
-                        "The event end date must be after its start date.");
+                        "Bestie, this event must end after it starts. "
+                                + "I'm organised, not a time traveller!");
             }
         } catch (DateTimeParseException exception) {
             // Event times can be free-form text, such as "2pm".
