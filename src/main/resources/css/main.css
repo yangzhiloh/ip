@@ -11,6 +11,11 @@
     -fx-background-color: transparent;
 }
 
+.dialog-container {
+    -fx-padding: 6 0;
+    -fx-spacing: 2;
+}
+
 .scroll-bar:vertical {
     -fx-background-color: transparent;
 }
