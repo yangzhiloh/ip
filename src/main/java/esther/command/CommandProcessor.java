@@ -38,6 +38,8 @@ public class CommandProcessor {
      * @return Messages and exit status produced by the command.
      */
     public CommandResult process(String command) {
+        command = command.trim();
+
         try {
             if (command.equals("bye")) {
                 return buildResult(List.of(

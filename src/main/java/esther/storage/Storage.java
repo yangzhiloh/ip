@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import esther.exception.EstherException;
 import esther.task.Deadline;
@@ -51,10 +52,19 @@ public class Storage {
             return tasks;
         }
 
-        for (String taskData : Files.readAllLines(
-                filePath, StandardCharsets.UTF_8)) {
+        List<String> taskDataLines = Files.readAllLines(
+                filePath, StandardCharsets.UTF_8);
+
+        for (int i = 0; i < taskDataLines.size(); i++) {
+            String taskData = taskDataLines.get(i);
             if (!taskData.isBlank()) {
-                tasks.add(parseTaskData(taskData));
+                try {
+                    tasks.add(parseTaskData(taskData));
+                } catch (EstherException exception) {
+                    throw new EstherException(String.format(
+                            "Unable to load task on line %d: %s",
+                            i + 1, exception.getMessage()));
+                }
             }
         }
 
