@@ -65,6 +65,19 @@ public class DialogBox extends HBox {
         return dialogBox;
     }
 
+    /**
+     * Creates a visually distinct dialog for an error response.
+     *
+     * @param text Error message text.
+     * @param image Esther avatar.
+     * @return Error dialog box.
+     */
+    public static DialogBox createErrorDialog(String text, Image image) {
+        DialogBox dialogBox = createEstherDialog(text, image);
+        dialogBox.getStyleClass().add("error-dialog");
+        return dialogBox;
+    }
+
     private void flip() {
         ObservableList<Node> children = FXCollections.observableArrayList(
                 getChildren());

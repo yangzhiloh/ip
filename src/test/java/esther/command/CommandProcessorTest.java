@@ -32,6 +32,7 @@ public class CommandProcessorTest {
         CommandResult result = processor.process("todo read book");
 
         assertFalse(result.shouldExit());
+        assertFalse(result.isError());
         assertTrue(result.messages().stream().anyMatch(
                 message -> message.contains("I've added this task")));
     }
@@ -42,6 +43,7 @@ public class CommandProcessorTest {
         CommandResult result = newProcessor().process("todo");
 
         assertFalse(result.shouldExit());
+        assertTrue(result.isError());
         assertTrue(result.messages().stream().anyMatch(
                 message -> message.contains("want to add a task")));
     }

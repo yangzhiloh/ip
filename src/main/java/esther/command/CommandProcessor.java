@@ -69,9 +69,9 @@ public class CommandProcessor {
                     "Now you have " + tasks.size() + " "
                             + getTaskWord(tasks.size()) + " in the list."), false);
         } catch (EstherException exception) {
-            return buildResult(List.of(exception.getMessage()), false);
+            return buildErrorResult(List.of(exception.getMessage()));
         } catch (IOException exception) {
-            return buildResult(List.of(SAVE_ERROR), false);
+            return buildErrorResult(List.of(SAVE_ERROR));
         }
     }
 
@@ -165,7 +165,11 @@ public class CommandProcessor {
     }
 
     private CommandResult buildResult(List<String> messages, boolean shouldExit) {
-        return new CommandResult(messages, shouldExit);
+        return new CommandResult(messages, shouldExit, false);
+    }
+
+    private CommandResult buildErrorResult(List<String> messages) {
+        return new CommandResult(messages, false, true);
     }
 
     private String getTaskWord(int taskCount) {
